@@ -1,0 +1,4 @@
+/.env
+/.venv
+/prod-ca-2021.crt
+/__pycache__
