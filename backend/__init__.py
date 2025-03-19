@@ -22,6 +22,7 @@ db_url = os.getenv("VITE_SUPABASE_DB")
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 
 db = SQLAlchemy(app)
