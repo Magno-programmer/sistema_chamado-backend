@@ -28,7 +28,7 @@ class UsuarioService:
         ]
 
     @staticmethod
-    def criar_usuario(nome, email, setor_id, role, senha):
+    def criar_usuario(id, nome, email, setor_id, role, senha):
         """Cria um novo usuário no banco de dados"""
         from backend.models.setor_model import Setor  # Importação dentro da função para evitar circular import
 
@@ -40,7 +40,7 @@ class UsuarioService:
         senha_hash = Usuario.hashing_pwd(senha)
 
         novo_usuario = Usuario(
-            id=str(uuid.uuid4()),
+            id=id,
             nome=nome,
             email=email,
             setor_id=setor_id,
