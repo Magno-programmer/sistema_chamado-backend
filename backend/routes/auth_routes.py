@@ -8,6 +8,10 @@ auth_bp = Blueprint("auth", __name__)
 def login():
     """Realiza a autenticação do usuário"""
     try:
+        
+        if request.content_type != "application/json":
+            return jsonify({"erro": "Content-Type deve ser application/json"}), 415  # ✅ Retorna erro se não for JSON
+        
         data = request.get_json()
 
         if not data:
