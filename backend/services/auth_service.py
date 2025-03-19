@@ -14,7 +14,7 @@ SUPABASE_KEY = os.getenv("VITE_SUPABASE_ANON_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 🔹 Configuração do JWT
-SECRET_KEY = os.getenv("VITE_SUPABASE_ANON_KEY")  # 🔥 Troque por um valor seguro em produção!
+SECRET_KEY = os.getenv("SECRET_KEY")  # 🔥 Troque por um valor seguro em produção!
 
 class AuthService:
 
