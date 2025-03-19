@@ -23,7 +23,7 @@ db_url = os.getenv("VITE_SUPABASE_DB")
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 # Define o caminho onde o certificado será salvo temporariamente
-ssl_cert_path = "/supabase.crt"
+ssl_cert_path = "supabase.crt"
 supabase_cert_content = os.getenv("SUPABASE_CERT")
 
 # Obtém o certificado da variável de ambiente e escreve no arquivo
