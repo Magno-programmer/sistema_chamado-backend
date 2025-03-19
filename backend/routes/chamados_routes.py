@@ -9,13 +9,41 @@ def verificar_admin():
     if g.user_role not in ["ADMIN"]:
         return jsonify({"erro": "Apenas administradores podem executar esta ação"}), 403
 
-# 🚀 Criar um chamado
+# 🚀 Listar todos os chamados
+@chamados_bp.route("/chamados", methods=["GET"])
+@verificar_autenticacao
+def listar_chamados():
+    """Retorna todos os chamados disponíveis"""
+    try:
+        chamados = ChamadoService.listar_chamados()
+        return jsonify(chamados)  # ✅ Retorna corretamente agora
+    except Exception as e:
+        return jsonify({"erro": "Erro ao listar chamados", "message": str(e)}), 500
+
+# 🚀 Criar um novo chamado
 @chamados_bp.route("/chamados", methods=["POST"])
 @verificar_autenticacao
 def criar_chamado():
-    """Cria um novo chamado vinculado ao usuário logado"""
+    """Cria um novo chamado"""
     try:
-        data = request.get_json()
+        content_type = request.content_type
+        data = None
+
+        # 🔹 Suporte a diferentes tipos de Content-Type
+        if content_type == "application/json":
+            data = request.get_json()
+        elif content_type == "application/x-www-form-urlencoded":
+            data = request.form.to_dict()
+        elif content_type == "multipart/form-data":
+            data = {key: request.form[key] for key in request.form}
+        elif content_type == "text/plain":
+            data = {"raw_text": request.data.decode("utf-8")}
+        else:
+            return jsonify({"erro": f"Tipo de requisição '{content_type}' não suportado"}), 415
+
+        if not data:
+            return jsonify({"erro": "Nenhum dado recebido"}), 400
+
         titulo = data.get("titulo")
         descricao = data.get("descricao")
         setor_id = data.get("setor_id")
@@ -27,24 +55,10 @@ def criar_chamado():
         chamado_id = ChamadoService.criar_chamado(titulo, descricao, g.user_id, setor_id, prazo)
         return jsonify({"mensagem": "Chamado criado com sucesso!", "id": chamado_id}), 201
 
-    except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
-
     except Exception as e:
         return jsonify({"erro": "Erro ao criar chamado", "message": str(e)}), 500
 
-# 🚀 Listar todos os chamados
-@chamados_bp.route("/chamados", methods=["GET"])
-@verificar_autenticacao
-def listar_chamados():
-    """Lista todos os chamados"""
-    try:
-        chamados = ChamadoService.listar_chamados()
-        return jsonify(chamados), 200
-    except Exception as e:
-        return jsonify({"erro": "Erro ao listar chamados", "message": str(e)}), 500
-
-# 🚀 Atualizar status de um chamado
+# 🚀 Atualizar um chamado por ID
 @chamados_bp.route("/chamados/<int:chamado_id>", methods=["PUT"])
 @verificar_autenticacao
 def atualizar_chamado(chamado_id):
@@ -62,11 +76,11 @@ def atualizar_chamado(chamado_id):
     except Exception as e:
         return jsonify({"erro": "Erro ao atualizar chamado", "message": str(e)}), 500
 
-# 🚀 Buscar um chamado por ID
+# 🚀 Buscar um chamado específico por ID
 @chamados_bp.route("/chamados/<int:chamado_id>", methods=["GET"])
 @verificar_autenticacao
 def buscar_chamado_por_id(chamado_id):
-    """Busca um chamado pelo ID"""
+    """Retorna um chamado específico pelo ID"""
     try:
         chamado = ChamadoService.buscar_por_id(chamado_id)
         if chamado:
@@ -75,11 +89,11 @@ def buscar_chamado_por_id(chamado_id):
     except Exception as e:
         return jsonify({"erro": "Erro ao buscar chamado", "message": str(e)}), 500
 
-# 🚀 Deletar um chamado
+# 🚀 Deletar um chamado específico por ID
 @chamados_bp.route("/chamados/<int:chamado_id>", methods=["DELETE"])
 @verificar_autenticacao
 def deletar_chamado(chamado_id):
-    """Exclui um chamado (somente Admins ou dono do chamado)"""
+    """Exclui um chamado pelo ID (Apenas ADMIN ou dono do chamado)"""
     try:
         chamado = ChamadoService.buscar_por_id(chamado_id)
 

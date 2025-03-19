@@ -6,16 +6,24 @@ auth_bp = Blueprint("auth", __name__)
 # 🚀 Login do usuário
 @auth_bp.route("/auth/login", methods=["POST"])
 def login():
-    """Realiza a autenticação do usuário"""
+    """Realiza a autenticação do usuário tratando diferentes tipos de entrada"""
     try:
-        
-        if request.content_type != "application/json":
-            return jsonify({"erro": "Content-Type deve ser application/json"}), 415  # ✅ Retorna erro se não for JSON
-        
-        data = request.get_json()
+        # 🔹 Verifica o tipo de Content-Type da requisição
+        content_type = request.content_type
+
+        if content_type == "application/json":
+            data = request.get_json()
+        elif content_type == "application/x-www-form-urlencoded":
+            data = request.form.to_dict()  # Captura os dados de um formulário
+        elif content_type == "multipart/form-data":
+            data = {key: request.form[key] for key in request.form}  # Formulário com arquivos
+        elif content_type == "text/plain":
+            data = {"raw_text": request.data.decode("utf-8")}  # Lê o texto puro
+        else:
+            return jsonify({"erro": f"Tipo de requisição '{content_type}' não suportado"}), 415
 
         if not data:
-            return jsonify({"erro": "Requisição inválida, JSON esperado"}), 400
+            return jsonify({"erro": "Nenhum dado recebido"}), 400
 
         email = data.get("email")
         password = data.get("password")
