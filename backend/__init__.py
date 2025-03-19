@@ -11,7 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # 🔹 Configurar CORS corretamente
-CORS(app, resources={r"/*": {"origins": ["https://preview--chamado-facilitas.lovable.app"]}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": ["https://chamado-facilitas.lovable.app/"]}}, supports_credentials=True)
 
 # 🔹 Conectar ao Supabase
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
