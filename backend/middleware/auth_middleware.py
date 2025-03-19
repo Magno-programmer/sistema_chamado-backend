@@ -13,7 +13,7 @@ def verificar_autenticacao(f):
 
         try:
             # 🔹 Remove 'Bearer ' e valida a assinatura do token
-            secret_key = current_app.config.get("SECRET_KEY", "default_secret_key")
+            secret_key = current_app.config.get("SECRET_KEY")
             decoded_token = jwt.decode(
                 token.split("Bearer ")[-1], secret_key, algorithms=["HS256"]
             )
