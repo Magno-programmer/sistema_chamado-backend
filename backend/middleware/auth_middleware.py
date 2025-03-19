@@ -5,7 +5,14 @@ import jwt
 def verificar_autenticacao(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        """Middleware para validar autenticação via JWT"""
+        """Middleware para validar autenticação via JWT e verificar Content-Type"""
+
+        # 🔹 Verifica se o Content-Type é application/json
+        content_type = request.content_type or "None"
+        if request.method in ["POST", "PUT", "PATCH"] and content_type != "application/json":
+            return jsonify({"erro": f"Tipo de requisição '{content_type}' não suportado. Use 'application/json'"}), 415
+
+        # 🔹 Obtém o token da requisição
         token = request.headers.get("Authorization")
 
         if not token or not token.startswith("Bearer "):
