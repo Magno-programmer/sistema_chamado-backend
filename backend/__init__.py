@@ -44,15 +44,4 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 
 db = SQLAlchemy(app)
 
-@app.after_request
-def apply_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS, TRACE, CONNECT"
-    response.headers["Access-Control-Max-Age"] = "3600"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Vary"] = "Accept-Encoding"
-    response.headers["Server"] = "cloudflare"
-    return response
-
 ma = Marshmallow(app)
