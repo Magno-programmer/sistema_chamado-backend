@@ -11,7 +11,12 @@ load_dotenv()
 app = Flask(__name__)
 
 # 🔹 Configurar CORS corretamente
-CORS(app, resources={r"/*": {"origins": ["https://chamado-facilitas.lovable.app/"]}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": ["https://chamado-facilitas.lovable.app/"]}},  # Permite todas as origens (*)
+     supports_credentials=True,  
+     allow_headers=["Content-Type", "Authorization"],  # Permite headers importantes
+     expose_headers=["Content-Type", "Authorization", "X-Content-Type-Options"],  # Expõe headers extras
+     methods=["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"],  # Permite todos os métodos
+     max_age=3600)  # Permite cache de 1 hora
 
 # 🔹 Conectar ao Supabase
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
@@ -38,4 +43,16 @@ if db_url and "?sslmode=" not in db_url:
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 
 db = SQLAlchemy(app)
+
+@app.after_request
+def apply_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS, TRACE, CONNECT"
+    response.headers["Access-Control-Max-Age"] = "3600"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Vary"] = "Accept-Encoding"
+    response.headers["Server"] = "cloudflare"
+    return response
+
 ma = Marshmallow(app)
