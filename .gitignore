@@ -1,4 +1,4 @@
 /.env
 /.venv
-/prod-ca-2021.crt
+supabase.crt
 __pycache__
