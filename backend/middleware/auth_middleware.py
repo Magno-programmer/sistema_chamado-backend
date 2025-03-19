@@ -9,7 +9,7 @@ def verificar_autenticacao(f):
 
         # 🔹 Verifica se o Content-Type é application/json
         content_type = request.content_type or "None"
-        if request.method in ["POST", "PUT", "PATCH"] and content_type != "application/json":
+        if request.method in ["GET", "POST", "PUT", "DELETE"] and content_type != "application/json":
             return jsonify({"erro": f"Tipo de requisição '{content_type}' não suportado. Use 'application/json'"}), 415
 
         # 🔹 Obtém o token da requisição
